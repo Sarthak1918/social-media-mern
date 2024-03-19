@@ -26,7 +26,7 @@ export const signupUser = AsyncHandler(async(req,res)=>{
         
     })
 
-    const userCreated = await User.findById(newUser._id).select("-password")  // checking if the new user is available on mongodb
+    const userCreated = await User.findById(newUser._id).select("-password -followers -following")  // checking if the new user is available on mongodb
         if (userCreated) {
             generateToken(newUser._id, res);
             res.status(201).json(
@@ -56,7 +56,7 @@ export const loginUser = AsyncHandler(async(req,res)=>{
 
     generateToken(user._id,res)
     
-    const loggedInUser = await User.findById(user._id).select("-password")
+    const loggedInUser = await User.findById(user._id).select("-password -followers -following")
     res.status(201).json(
         new ApiResponse(201,loggedInUser,"Logged in Successfully")
     )
