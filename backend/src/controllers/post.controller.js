@@ -3,9 +3,11 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export const createPost = AsyncHandler(async (req, res) => {
-    const { postedBy, text, img } = req.body;
+    const { postedBy, text } = req.body;
+    let{image} = req.body
 
     if (!postedBy || !text) {
         throw new ApiError(400, "Postedby and text fields are required");
@@ -25,15 +27,17 @@ export const createPost = AsyncHandler(async (req, res) => {
         throw new ApiError(401, `Text must be less than ${maxLength} characters`);
     }
 
-    // if (img) {
-    // 	const uploadedResponse = await cloudinary.uploader.upload(img);
-    // 	img = uploadedResponse.secure_url;
-    // }
+    if (image) {
+    	const uploadedResponse = await cloudinary.uploader.upload(image,{
+            resource_type : "auto"
+        });
+    	image = uploadedResponse.secure_url;
+    }
 
     const newPost = await Post.create({
         postedBy,
         text,
-        img
+        image
     });
 
     res.status(201).json(

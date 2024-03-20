@@ -9,6 +9,8 @@ import AuthPage from './pages/AuthPage'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import userAtom from './atoms/userAtom'
 import LogoutBtn from './components/LogoutBtn'
+import UpdateProfilePage from './pages/UpdateProfilePage'
+import CreatePost from './components/CreatePost'
 
 function App() {
   const user = useRecoilValue(userAtom)
@@ -16,15 +18,16 @@ function App() {
 
   
   return (
-      <Container maxW={"620px"}>
+      <Container maxW={"750px"}>
         <Header />
         <Routes>
           <Route path='/' element={user?<HomePage />:<Navigate to="/auth"/>} />
           <Route path='/auth' element={!user ? <AuthPage />:<Navigate to="/"/>} />
+          <Route path='/update' element={user ? <UpdateProfilePage />:<Navigate to="/auth"/>} />
           <Route path='/:username' element={<UserPage />} />
           <Route path='/:username/post/:pid' element={<PostPage />} />
         </Routes>
-        {user&&<LogoutBtn/>}
+        {user&&<CreatePost/>}
       </Container>
 
   )

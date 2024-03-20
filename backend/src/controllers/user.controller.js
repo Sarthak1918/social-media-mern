@@ -4,10 +4,11 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { generateToken } from "../utils/generateToken.js";
+import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcrypt"
 
 export const signupUser = AsyncHandler(async(req,res)=>{
-    const{name,email,username,password} = req.body
+    const{name,email,username,password,profilePic} = req.body
     //check if user exists in the database
     if ([name, email,username, password].some((field) => (field?.trim() === ""))) {
         throw new ApiError(400, "All fields are mandatory")
@@ -111,9 +112,10 @@ export const followUnFollowUser = AsyncHandler(async(req,res)=>{
 
 export const updateUser = AsyncHandler(async(req,res)=>{
         const userId = req.user._id
-        const{name,username,email,password,bio,profilePic} = req.body
+        const{name,username,email,password,bio} = req.body
+        let {profilePic} = req.body
     
-        let user = await User.findById(userId)
+        let user = await User.findById(userId).select("-password -following -followers")
         if(!user) {
             throw new ApiError(400,"User not found")
         }
@@ -139,6 +141,17 @@ export const updateUser = AsyncHandler(async(req,res)=>{
                 user.username = username
             }
         }
+
+        if (profilePic) {
+			if (user.profilePic!="") {
+				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
+			}
+
+			const uploadedResponse = await cloudinary.uploader.upload(profilePic,{
+                resource_type : "auto",
+            });
+			profilePic = uploadedResponse.secure_url;
+		}
 
         user.name = name || user.name
         user.bio = bio || user.bio

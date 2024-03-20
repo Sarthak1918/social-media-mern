@@ -29,6 +29,7 @@ export default function SignupCard() {
   const setAuthScreenState = useSetRecoilState(authScreenAtom);
   const setUserState = useSetRecoilState(userAtom)
   const showToast = useCustomToast()
+  const [loading,setLoading] = useState(false);
   
   const[inputs,setInputs] = useState({
     name:"",
@@ -40,6 +41,10 @@ export default function SignupCard() {
  
   
   const handleSignup = async()=>{
+    if(loading){
+      return;
+    }
+    setLoading(true);
     try {
       const res = await fetch("/api/user/signup",{
         method : "POST",
@@ -114,8 +119,9 @@ export default function SignupCard() {
               </InputGroup>
             </FormControl>
             <Stack spacing={10} pt={2}>
-              <Button loadingText="Submitting" size="lg" bg={'blue.400'} color={'white'} _hover={{bg: 'blue.500'}}
+              <Button loadingText="Signing in" size="lg" bg={'blue.400'} color={'white'} _hover={{bg: 'blue.500'}}
                 onClick={handleSignup}
+                isLoading={loading}
                 >
                 Sign up
               </Button>

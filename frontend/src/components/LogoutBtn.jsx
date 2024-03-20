@@ -3,6 +3,7 @@ import React from 'react'
 import { useSetRecoilState } from 'recoil'
 import userAtom from '../atoms/userAtom'
 import useCustomToast from '../hooks/useCustomToast'
+import { LuLogOut } from 'react-icons/lu'
 
 function LogoutBtn() {
 const showToast = useCustomToast()    
@@ -28,12 +29,9 @@ const setUserState = useSetRecoilState(userAtom)
     
   return (
     <Button
-    position={"fixed"}
-    top={"30px"}
-    right={"30px"}
     size={"sm"}
     onClick={handleLogout}
-    >Logout</Button>
+    ><LuLogOut size={22}/></Button>
   )
 }
 
