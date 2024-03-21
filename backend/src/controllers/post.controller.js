@@ -89,7 +89,7 @@ export const likeUnlikePost = AsyncHandler(async(req,res)=>{
     if(isLiked){
         await Post.updateOne({_id: id}, {$pull: {likes: req.user._id}});
         res.status(201).json(
-            new ApiResponse(201, null, "Post Unliked")
+            new ApiResponse(201, null, "Post Disliked")
         );
     }else{
         post.likes.push(req.user._id);

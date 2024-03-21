@@ -8,8 +8,8 @@ router.get("/feed",verifyUserJWT,getFeedPosts)
 router.post("/create",verifyUserJWT,createPost)
 router.get("/:id",verifyUserJWT,getPost)
 router.delete("/:id",verifyUserJWT,deletePost)
-router.post("/like/:id",verifyUserJWT,likeUnlikePost)
-router.post("/reply/:id",verifyUserJWT,replyToPost)
+router.put("/like/:id",verifyUserJWT,likeUnlikePost)
+router.put("/reply/:id",verifyUserJWT,replyToPost)
 
 export default router;
 

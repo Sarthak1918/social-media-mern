@@ -1,8 +1,10 @@
 import {
+	Avatar,
 	Box,
 	Button,
 	Flex,
 	FormControl,
+	Icon,
 	Input,
 	Modal,
 	ModalBody,
@@ -14,10 +16,58 @@ import {
 	Text,
 	useDisclosure,
 } from "@chakra-ui/react";
+import { useState } from "react";
+import { useRecoilValue } from "recoil"
+import userAtom from "../atoms/userAtom";
+import useCustomToast from "../hooks/useCustomToast";
+import { BsReply } from "react-icons/bs";
 
-const Actions = ({liked,setLiked}) => {
-    
+const Actions = ({ post: post_ }) => {
+	const user = useRecoilValue(userAtom)
+	const showToast = useCustomToast();
+
+	const [post, setPost] = useState(post_); // This is a dummy state
+	const [liked, setLiked] = useState(post?.likes.includes(user?._id));
+	const[isLiking,setIsLiking] = useState(false);
+
+	const handleLikeUnlike = async () => {
+		if(isLiking) return;  // Prevent multiple clicks while processing request
+		setIsLiking(true)
+		if (!user) {
+			showToast("Error", "Please login to like posts", "error")
+			return;
+		}
+		try {
+			const res = await fetch(`/api/post/like/${post._id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				}
+			})
+	
+			const data = await res.json();
+			console.log(data);
+			if (data.success === false) {
+				showToast("Error", data.message, "error")
+				return;
+			}
+	
+			if (!liked) {
+				setPost({ ...post, likes: [...post.likes, user._id] })
+			} else {
+				setPost({ ...post, likes: post.likes.filter((id) => id !== user._id) })
+			}
+			setLiked(!liked)
+			// showToast("Success", data.message, "success")
+		} catch (error) {
+			showToast("Error", data.message, "error")
+		}finally{
+			setIsLiking(false)
+		}
+	}
+
 	return (
+		<Flex direction={"column"} w={"full"}>
 			<Flex gap={3} my={2} onClick={(e) => e.preventDefault()}>
 				<svg
 					aria-label='Like'
@@ -27,7 +77,7 @@ const Actions = ({liked,setLiked}) => {
 					role='img'
 					viewBox='0 0 24 22'
 					width='20'
-                    onClick={()=>setLiked(!liked)}
+					onClick={handleLikeUnlike}
 				>
 					<path
 						d='M1 7.66c0 4.575 3.899 9.086 9.987 12.934.338.203.74.406 1.013.406.283 0 .686-.203 1.013-.406C19.1 16.746 23 12.234 23 7.66 23 3.736 20.245 1 16.672 1 14.603 1 12.98 1.94 12 3.352 11.042 1.952 9.408 1 7.328 1 3.766 1 1 3.736 1 7.66Z'
@@ -44,7 +94,7 @@ const Actions = ({liked,setLiked}) => {
 					role='img'
 					viewBox='0 0 24 24'
 					width='20'
-					
+
 				>
 					<title>Comment</title>
 					<path
@@ -60,7 +110,29 @@ const Actions = ({liked,setLiked}) => {
 
 				<ShareSVG />
 
+				
+
 			</Flex>
+
+			<Flex gap={2} alignItems={"center"}>
+					<Text color={"gray.light"} fontSize='sm'>
+						{post?.replies.length} replies
+					</Text>
+					<Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
+					<Text color={"gray.light"} fontSize='sm'>
+						{post?.likes.length} likes
+					</Text>
+				</Flex>
+
+				{/* comment box */}
+				<FormControl  display={"flex"} py={4} gap={2}  alignItems={"center"} justifyContent={"space-between"}>
+					<Avatar w={8} h={8} name={user?.name} src={user?.profilePic}/>
+					<Input placeholder="Add a comment..." />
+					<Button colorScheme="blue" w={5}>
+						<Icon as={BsReply} />
+					</Button>
+				</FormControl>
+		</Flex>
 	);
 };
 
