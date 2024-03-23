@@ -18,7 +18,7 @@ import { useState } from 'react'
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import authScreenAtom from '../atoms/authAtom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import useCustomToast from '../hooks/useCustomToast';
 import userAtom from '../atoms/userAtom';
 

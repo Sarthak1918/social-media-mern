@@ -1,13 +1,13 @@
-import { Button, Flex, Image, useColorMode } from "@chakra-ui/react";
+import { Button, Flex, Image, Text, useColorMode } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import { AiFillHome } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
 import { Link } from "react-router-dom";
 import LogoutBtn from "./LogoutBtn";
-// import { FiLogOut } from "react-icons/fi";
-// import { BsFillChatQuoteFill } from "react-icons/bs";
-// import { MdOutlineSettings } from "react-icons/md";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { BsSearch } from "react-icons/bs";
+
 
 const Header = () => {
 	const { colorMode, toggleColorMode } = useColorMode();
@@ -15,36 +15,29 @@ const Header = () => {
 	return (
 		<Flex justifyContent={"space-between"} alignItems={"center"} mt={6} mb='12'>
 
-			<Link to="/">
+			{user && <Link to="/">
 				<AiFillHome size={24} />
 			</Link>
-
-			<Image
-				cursor={"pointer"}
-				alt='logo'
-				w={6}
-				src={colorMode === "dark" ? "/light-logo.svg" : "/dark-logo.svg"}
-				onClick={toggleColorMode}
-			/>
-			{
-				user && (
-					<Flex  gap={3} alignItems={"center"}>
-					<Link to={`/${user?.username}`}>
-						<RxAvatar size={24} />
-					</Link>
-					<LogoutBtn/>
-					</Flex>
-				)
 			}
+			<Text className="pacifico-regular" fontSize={{ base: "xl", md: "2xl" }}>Reconnect</Text>
 
-			{
-				!user && (
-					<Link to={`/auth`}>
-						<Button>Login</Button>
-					</Link>
-				)
-			}
-			
+			<Flex gap={4} alignItems={"center"}>
+				{colorMode === 'light' ? <MoonIcon fontSize={20} onClick={toggleColorMode} /> : <SunIcon fontSize={20}  onClick={toggleColorMode} />}
+				{
+					user && (
+						<>
+							<Link to={`/${user?.username}`}>
+								<RxAvatar fontSize={22} />
+							</Link>
+							<Link to={"/search"}>
+								<BsSearch size={18} />
+							</Link>
+							<LogoutBtn />
+						</>
+
+					)
+				}
+			</Flex>
 
 		</Flex>
 	);

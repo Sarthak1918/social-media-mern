@@ -1,12 +1,12 @@
 import { AddIcon } from '@chakra-ui/icons'
-import { Box, Button, CloseButton, Flex, FormControl, FormLabel, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Textarea, useDisclosure } from '@chakra-ui/react'
-import React, { useRef, useState } from 'react'
+import { Box, Button, CloseButton, Flex, FormControl, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Textarea, useDisclosure } from '@chakra-ui/react'
+import { useRef, useState } from 'react'
 import { LuImagePlus } from "react-icons/lu";
 import usePreviewImage from '../hooks/usePreviewImage';
-import { IoCloseCircle, IoCloseCircleSharp } from "react-icons/io5";
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import useCustomToast from '../hooks/useCustomToast';
+import postsAtom from '../atoms/postsAtom';
 
 
 
@@ -18,6 +18,7 @@ function CreatePost() {
     const user = useRecoilValue(userAtom)
     const showToast = useCustomToast()
     const[loading,setLoading] = useState(false);
+    const[posts,setPosts] = useRecoilState(postsAtom)
 
 
     const handleCreatePost = async () => {
@@ -39,6 +40,7 @@ function CreatePost() {
                 showToast("Error",data.message,"error")
             }else{
                 showToast("Success",data.message,"success")
+                setPosts([data.data,...posts])
                 setPostText('')
                 setImageUrl(null)
                 onClose()
@@ -95,9 +97,6 @@ function CreatePost() {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-
-
-
         </>
 
     )

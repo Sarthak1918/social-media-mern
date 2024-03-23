@@ -1,5 +1,4 @@
 import { Button } from '@chakra-ui/react'
-import React from 'react'
 import { useSetRecoilState } from 'recoil'
 import userAtom from '../atoms/userAtom'
 import useCustomToast from '../hooks/useCustomToast'
@@ -28,10 +27,7 @@ const setUserState = useSetRecoilState(userAtom)
  }
     
   return (
-    <Button
-    size={"sm"}
-    onClick={handleLogout}
-    ><LuLogOut size={22}/></Button>
+    <LuLogOut cursor={"pointer"} onClick={handleLogout} fontSize={20}/>
   )
 }
 

@@ -1,40 +1,49 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import UserHeader from '../components/UserHeader'
-import { Link, useParams } from 'react-router-dom'
-import UserPost from '../components/UserPost'
+import { useParams } from 'react-router-dom'
 import useCustomToast from '../hooks/useCustomToast'
 import { Flex, Spinner } from '@chakra-ui/react'
+import Post from '../components/Post'
+import useGetUserProfile from '../hooks/useGetUserProfile'
+import { useRecoilValue,useRecoilState } from 'recoil'
+import userAtom from '../atoms/userAtom'
+import CreatePost from '../components/CreatePost'
+import postsAtom from '../atoms/postsAtom'
 
 function UserPage() {
-  const [user,setUser] = useState(null) //user we are viewing/searching
+
+  const{user,loading} = useGetUserProfile()
   const{username} = useParams()
+  const[posts,setPosts] = useRecoilState(postsAtom)  //posts of the user we are viewing/searching
+  const[fetchingPosts,setFetchingPosts] = useState(true) //fetching posts of the user we are viewing/searching
+  const currentUser = useRecoilValue(userAtom);
+
   const showToast = useCustomToast()
-  const[loading,setLoading] = useState(true); //since its a page,when the page loads there should be a loading state(loader) and after fetching(either success or failure) the loader should be removed
-
-
   useEffect(()=>{
-    const getUser = async()=>{
-      try{
-        const res = await fetch(`/api/user/profile/${username}`)
+
+    const getUserPosts = async()=>{
+      setFetchingPosts(true);
+      try {
+        const res = await fetch(`/api/post/userposts/${username}`)
         const data = await res.json()
         if(data.success===false){
-        showToast("Error",data.message,"error")
-        return;
-        }
-        else{
+          showToast("Error",data.message,"error")
+          return;
+        }else{
           // showToast("Success",data.message,"success")
-          console.log(data.data);
-          setUser(data.data) //the first data is the response object and the second data is the actual data object that contains user info
+          setPosts(data.data) //the first data is the response object and the second data is the actual data object that contains user info
         }
-      }catch(error){
+      } catch (error) {
         showToast("Error",error,"error")
+        setPosts([])
         return;
       }finally{
-        setLoading(false)
+        setFetchingPosts(false);
       }
     }
-    getUser();
-  },[username])
+
+    getUserPosts()
+  },[setPosts, showToast, username])
 
   if(loading){
     return <Flex justifyContent={"center"}>
@@ -45,12 +54,18 @@ function UserPage() {
   return (
     <div>
       <UserHeader  user={user}/>
-      <UserPost likes ={1889} replies={122} postImg = "post1.png" postTitle="Lets talk about Threds"/>
-      <UserPost likes ={267} replies={12} postImg = "post2.png" postTitle="This is my first thread"/>
-      <UserPost likes ={143} replies={45} postImg = "post3.png" postTitle="Hello People"/>
-      <UserPost likes ={143} replies={45}  postTitle="Hello People"/>
+      {!fetchingPosts && posts.length === 0 && <h1 style={{textAlign:"center",fontSize:"larger",fontWeight:"500",paddingBlock:"30px"}}>No posts to show</h1>}
+      {fetchingPosts &&<Flex justifyContent={"center"}>
+      <Spinner size={"xl"}/>
+    </Flex>}
+      {posts.map((post) => {
+        return <Post key={post._id} post={post} postedBy={post.postedBy}/>
+      })}
+      {currentUser.username === user.username && <CreatePost/>}
     </div>
   )
+
+  
 }
 
 export default UserPage

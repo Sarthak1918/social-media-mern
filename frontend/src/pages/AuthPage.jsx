@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import SignupCard from '../components/SignupCard.jsx';
 import LoginCard from '../components/LoginCard.jsx';
 import { useRecoilValue } from 'recoil';

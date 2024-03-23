@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "../models/user.model.js";
+import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
@@ -157,6 +158,18 @@ export const updateUser = AsyncHandler(async(req,res)=>{
         user.bio = bio || user.bio
         user.profilePic = profilePic || user.profilePic
     
+        await Post.updateMany(
+            {"replies.userId":userId},
+            {
+                $set:{
+                    "replies.$[reply].username":user.username,
+                    "replies.$[reply].userProfilePic":user.profilePic
+                }
+            },
+            {
+                arrayFilters:[{"reply.userId":userId}]
+            })
+
         user = await user.save()
         res.status(200).json(
             new ApiResponse(200,user,"User  updated Successfully")
@@ -185,4 +198,15 @@ export const getUserProfile = AsyncHandler( async (req, res) => {
         );
 
 	
+})
+
+export const searchUser = AsyncHandler(async(req,res)=>{
+    const {query} = req.query
+    if (!query) {
+        throw new ApiError(400, "Query is required")
+    }
+    const users = await User.find({ $or: [{ name: { $regex: query, $options: "i" } }, { username: { $regex: query, $options: "i" } }] }).select("-password")
+    res.status(200).json(
+        new ApiResponse(200,users,"Users fetched successfully")
+    )
 })

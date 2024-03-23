@@ -9,7 +9,7 @@ const useCustomToast = () => {
       title: title,
       description: description,
       status: status,
-      duration: 9000,
+      duration: 2000,
       isClosable: true,
     });
   },[toast])

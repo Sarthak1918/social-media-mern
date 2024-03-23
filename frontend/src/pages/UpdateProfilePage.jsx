@@ -7,14 +7,14 @@ import {
     Input,
     Stack,
     useColorModeValue,
-    HStack,
     Avatar,
     AvatarBadge,
     IconButton,
     InputGroup,
     InputRightElement,
     Center,
-    Text
+    Text,
+    Textarea
 } from '@chakra-ui/react'
 
 import { SmallCloseIcon } from '@chakra-ui/icons'
@@ -32,10 +32,10 @@ export default function UpdateProfilePage() {
     const setUser = useSetRecoilState(userAtom)
 
     const [inputs, setInputs] = useState({
-        name: user ? user.name : "",
-        username: user ? user.username : "",
-        email: user ? user.email : "",
-        bio: user ? user.bio : "",
+        name: "",
+        username: "",
+        email:  "",
+        bio:  "",
         password: "",
     })
 
@@ -126,7 +126,7 @@ export default function UpdateProfilePage() {
                     <FormControl>
                         <FormLabel>full name</FormLabel>
                         <Input
-                            placeholder="name"
+                            placeholder={user ? user.name : "Full Name"}
                             _placeholder={{ color: 'gray.500' }}
                             type="text"
                             value={inputs.name}
@@ -136,7 +136,7 @@ export default function UpdateProfilePage() {
                     <FormControl>
                         <FormLabel>User name</FormLabel>
                         <Input
-                            placeholder="UserName"
+                            placeholder={user?.username || "User Name"}
                             _placeholder={{ color: 'gray.500' }}
                             type="text"
                             value={inputs.username}
@@ -146,7 +146,7 @@ export default function UpdateProfilePage() {
                     <FormControl >
                         <FormLabel>Email address</FormLabel>
                         <Input
-                            placeholder="your-email@example.com"
+                            placeholder={user ? user.email : "Email Address"}
                             _placeholder={{ color: 'gray.500' }}
                             type="email"
                             value={inputs.email}
@@ -155,8 +155,8 @@ export default function UpdateProfilePage() {
                     </FormControl>
                     <FormControl >
                         <FormLabel>Bio</FormLabel>
-                        <Input
-                            placeholder="bio"
+                        <Textarea
+                            placeholder={user?.bio || "Bio"}
                             _placeholder={{ color: 'gray.500' }}
                             type="text"
                             value={inputs.bio}

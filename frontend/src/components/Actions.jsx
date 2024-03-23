@@ -2,36 +2,35 @@ import {
 	Avatar,
 	Box,
 	Button,
+	Divider,
 	Flex,
 	FormControl,
 	Icon,
 	Input,
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
 	Text,
-	useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import userAtom from "../atoms/userAtom";
 import useCustomToast from "../hooks/useCustomToast";
 import { BsReply } from "react-icons/bs";
+import Comment from "./Comment";
+import "../App.css";
+import postsAtom from "../atoms/postsAtom";
 
-const Actions = ({ post: post_ }) => {
+const Actions = ({ post }) => {
 	const user = useRecoilValue(userAtom)
 	const showToast = useCustomToast();
 
-	const [post, setPost] = useState(post_); // This is a dummy state
+	const [posts, setPosts] = useRecoilState(postsAtom); // This is a dummy state
 	const [liked, setLiked] = useState(post?.likes.includes(user?._id));
-	const[isLiking,setIsLiking] = useState(false);
+	const [isLiking, setIsLiking] = useState(false);
+	const [reply, setReply] = useState("");
+	const [commentBoxVisible, setCommentBoxVisible] = useState(false);
+
 
 	const handleLikeUnlike = async () => {
-		if(isLiking) return;  // Prevent multiple clicks while processing request
+		if (isLiking) return;  // Prevent multiple clicks while processing request
 		setIsLiking(true)
 		if (!user) {
 			showToast("Error", "Please login to like posts", "error")
@@ -44,26 +43,57 @@ const Actions = ({ post: post_ }) => {
 					"Content-Type": "application/json",
 				}
 			})
-	
+
 			const data = await res.json();
 			console.log(data);
 			if (data.success === false) {
 				showToast("Error", data.message, "error")
 				return;
 			}
-	
+
 			if (!liked) {
-				setPost({ ...post, likes: [...post.likes, user._id] })
+				const updatedPosts = posts.map((p) => p._id === post._id ? { ...p, likes: [...p.likes, user._id] } : p)
+				setPosts(updatedPosts)
 			} else {
-				setPost({ ...post, likes: post.likes.filter((id) => id !== user._id) })
+				const updatedPosts = posts.map((p) => p._id === post._id ? { ...p, likes: p.likes.filter((id) => id !== user._id) } : p)
+				setPosts(updatedPosts)
 			}
 			setLiked(!liked)
 			// showToast("Success", data.message, "success")
 		} catch (error) {
 			showToast("Error", data.message, "error")
-		}finally{
+		} finally {
 			setIsLiking(false)
 		}
+	}
+
+
+	const handleComment = async () => {
+		if (!user) {
+			showToast("Error", "Please login to comment on posts", "error")
+			return;
+		}
+		try {
+			const res = await fetch(`/api/post/reply/${post._id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ text: reply })
+			})
+
+			const data = await res.json();
+			if (data.success === false) {
+				showToast("Error", data.message, "error")
+				return;
+			}
+			setPosts(posts.map((p) => p._id === post._id ? { ...p, replies: [...p.replies, data.data] } : p))
+			setReply("")
+			showToast("Success", data.message, "success")
+		} catch (error) {
+			showToast("Error", data.message, "error")
+		}
+
 	}
 
 	return (
@@ -78,7 +108,9 @@ const Actions = ({ post: post_ }) => {
 					viewBox='0 0 24 22'
 					width='20'
 					onClick={handleLikeUnlike}
+					cursor={"pointer"}
 				>
+					<title>Like</title>
 					<path
 						d='M1 7.66c0 4.575 3.899 9.086 9.987 12.934.338.203.74.406 1.013.406.283 0 .686-.203 1.013-.406C19.1 16.746 23 12.234 23 7.66 23 3.736 20.245 1 16.672 1 14.603 1 12.98 1.94 12 3.352 11.042 1.952 9.408 1 7.328 1 3.766 1 1 3.736 1 7.66Z'
 						stroke='currentColor'
@@ -94,7 +126,8 @@ const Actions = ({ post: post_ }) => {
 					role='img'
 					viewBox='0 0 24 24'
 					width='20'
-
+					cursor={"pointer"}
+					onClick={()=>setCommentBoxVisible((prev)=>!prev)}
 				>
 					<title>Comment</title>
 					<path
@@ -106,57 +139,53 @@ const Actions = ({ post: post_ }) => {
 					></path>
 				</svg>
 
-				<RepostSVG />
 
 				<ShareSVG />
 
-				
+
 
 			</Flex>
 
 			<Flex gap={2} alignItems={"center"}>
-					<Text color={"gray.light"} fontSize='sm'>
-						{post?.replies.length} replies
-					</Text>
-					<Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
-					<Text color={"gray.light"} fontSize='sm'>
-						{post?.likes.length} likes
-					</Text>
-				</Flex>
+				<Text color={"gray.light"} fontSize='sm'>
+					{post?.replies.length} replies
+				</Text>
+				<Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
+				<Text color={"gray.light"} fontSize='sm'>
+					{post?.likes.length} likes
+				</Text>
+			</Flex>
 
-				{/* comment box */}
-				<FormControl  display={"flex"} py={4} gap={2}  alignItems={"center"} justifyContent={"space-between"}>
-					<Avatar w={8} h={8} name={user?.name} src={user?.profilePic}/>
-					<Input placeholder="Add a comment..." />
-					<Button colorScheme="blue" w={5}>
-						<Icon as={BsReply} />
-					</Button>
-				</FormControl>
+			{/* comment box */}
+
+			<Box hidden={commentBoxVisible}>
+			<Divider my={4} />
+			<Box maxH="200px" overflowY="auto">
+				{
+					post?.replies.map((comment) => {
+						return <Comment key={comment._id} comment={comment} />
+					})
+				}
+			</Box>
+
+			<FormControl display={"flex"} py={4} gap={2} alignItems={"center"} justifyContent={"space-between"}>
+				<Avatar w={8} h={8} name={user?.name} src={user?.profilePic} />
+				<Input placeholder="Add a comment..." value={reply} onChange={(e)=>setReply(e.target.value)}/>
+				<Button colorScheme="blue" w={5} onClick={handleComment}>
+					<Icon as={BsReply} />
+				</Button>
+			</FormControl>
+			</Box>
+			
+
+
 		</Flex>
 	);
 };
 
 export default Actions;
 
-const RepostSVG = () => {
-	return (
-		<svg
-			aria-label='Repost'
-			color='currentColor'
-			fill='currentColor'
-			height='20'
-			role='img'
-			viewBox='0 0 24 24'
-			width='20'
-		>
-			<title>Repost</title>
-			<path
-				fill=''
-				d='M19.998 9.497a1 1 0 0 0-1 1v4.228a3.274 3.274 0 0 1-3.27 3.27h-5.313l1.791-1.787a1 1 0 0 0-1.412-1.416L7.29 18.287a1.004 1.004 0 0 0-.294.707v.001c0 .023.012.042.013.065a.923.923 0 0 0 .281.643l3.502 3.504a1 1 0 0 0 1.414-1.414l-1.797-1.798h5.318a5.276 5.276 0 0 0 5.27-5.27v-4.228a1 1 0 0 0-1-1Zm-6.41-3.496-1.795 1.795a1 1 0 1 0 1.414 1.414l3.5-3.5a1.003 1.003 0 0 0 0-1.417l-3.5-3.5a1 1 0 0 0-1.414 1.414l1.794 1.794H8.27A5.277 5.277 0 0 0 3 9.271V13.5a1 1 0 0 0 2 0V9.271a3.275 3.275 0 0 1 3.271-3.27Z'
-			></path>
-		</svg>
-	);
-};
+
 
 const ShareSVG = () => {
 	return (

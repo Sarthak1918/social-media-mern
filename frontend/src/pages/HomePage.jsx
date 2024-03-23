@@ -1,11 +1,12 @@
-import { Button, Flex, Spinner } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Flex, Spinner } from '@chakra-ui/react'
+import  { useEffect, useState } from 'react'
 import useCustomToast from '../hooks/useCustomToast';
 import Post from '../components/Post';
+import { useRecoilState } from 'recoil';
+import postsAtom from '../atoms/postsAtom';
 
 function HomePage() {
-  const[feedPosts,setFeedPosts] = useState([]);
+  const[posts,setPosts] = useRecoilState(postsAtom);
   const[loading,setLoading] = useState(true);
 
   const showToast = useCustomToast()
@@ -19,7 +20,7 @@ function HomePage() {
         if(data.success === false){
           showToast("Error",data.message,"error")
         }else{
-          setFeedPosts(data.data)
+          setPosts(data.data)
         }
       } catch (error) {
         showToast("Error",error,"error")
@@ -28,17 +29,17 @@ function HomePage() {
       }
     }
     getFeedPosts()
-  },[])
+  },[setPosts, showToast])
 
   return (
     <>
-      {!loading && feedPosts.length === 0 && <h1 style={{textAlign:"center",fontSize:"larger",fontWeight:"500"}}>No posts to show.Follow some users</h1>}
+      {!loading && posts.length === 0 && <h1 style={{textAlign:"center",fontSize:"larger",fontWeight:"500"}}>No posts to show.Follow some users</h1>}
 
       {loading && <Flex justifyContent={"center"} p={5}>
         <Spinner size={"xl"}/>
       </Flex> }
 
-      {!loading && feedPosts.map((post,index) => {
+      {!loading && posts.map((post) => {
        return <Post key={post._id} post={post} postedBy={post.postedBy}/>
       })}
     </>

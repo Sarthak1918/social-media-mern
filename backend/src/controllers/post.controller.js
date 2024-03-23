@@ -66,10 +66,10 @@ export const deletePost = AsyncHandler(async(req,res)=>{
 			throw new ApiError(401, "Unauthorized to delete post");
 		}
 
-		// if (post.img) {
-		// 	const imgId = post.img.split("/").pop().split(".")[0];
-		// 	await cloudinary.uploader.destroy(imgId);
-		// }
+		if (post.image) {
+			const imgId = post.image.split("/").pop().split(".")[0];
+			await cloudinary.uploader.destroy(imgId);
+		}
 
 		await Post.findByIdAndDelete(req.params.id);
 
@@ -120,7 +120,7 @@ export const replyToPost = AsyncHandler(async(req,res)=>{
     await post.save();
 
     res.status(201).json(
-        new ApiResponse(201, post, "Reply Added Successfully")
+        new ApiResponse(201, reply, "Reply Added Successfully")
     );
 })
 
@@ -142,5 +142,19 @@ export const getFeedPosts = AsyncHandler(async(req,res)=>{
     const feedPosts = await Post.find({postedBy: {$in: following}}).sort({createdAt: -1});
     res.status(200).json(
         new ApiResponse(200, feedPosts, "Feed Posts Retrieved Successfully")
+    );
+})
+
+export const getUserPosts = AsyncHandler(async(req,res)=>{
+    const {username} = req.params;
+    const user = await User.findOne({username});
+    
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    const userPosts = await Post.find({postedBy: user._id}).sort({createdAt: -1});
+    res.status(200).json(
+        new ApiResponse(200, userPosts, "User Posts Retrieved Successfully")
     );
 })
