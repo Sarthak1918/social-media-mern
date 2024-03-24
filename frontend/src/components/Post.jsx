@@ -11,7 +11,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import postsAtom from "../atoms/postsAtom";
 const Post = ({ post, postedBy }) => {
-    const [liked, setLiked] = useState(false);
     const [user, setUser] = useState(null);
     const showToast = useCustomToast()
     const navigate = useNavigate();
@@ -68,7 +67,7 @@ const Post = ({ post, postedBy }) => {
 
     if (!user) return null;
     return (
-        <Box my={10}>
+        <Box mb={16}>
                 <Flex flex={1} flexDirection={"column"} gap={2}>
                     <Flex justifyContent={"space-between"} w={"full"}>
 

@@ -1,44 +1,80 @@
-import { Button, Flex, Image, Text, useColorMode } from "@chakra-ui/react";
+import { Flex, Text, useColorMode, IconButton, Menu, MenuButton, MenuList, MenuItem, Box } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
-import { AiFillHome } from "react-icons/ai";
-import { RxAvatar } from "react-icons/rx";
+import { MoonIcon, SunIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import LogoutBtn from "./LogoutBtn";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { BsSearch } from "react-icons/bs";
+import { RxAvatar } from "react-icons/rx";
+
 
 
 const Header = () => {
 	const { colorMode, toggleColorMode } = useColorMode();
-	const user = useRecoilValue(userAtom)
+	const user = useRecoilValue(userAtom);
+
 	return (
-		<Flex justifyContent={"space-between"} alignItems={"center"} mt={6} mb='12'>
-
-			{user && <Link to="/">
-				<AiFillHome size={24} />
+		<Flex
+			justifyContent="space-between"
+			alignItems="center"
+			mb="8"
+			py={3}
+			px={1}
+			position="sticky" // Add this line
+            top="0" // Add this line
+            zIndex="sticky" // Add this line
+			bg={"white"}
+		>
+			{/* Logo */}
+			{colorMode === 'light' ? <MoonIcon fontSize={20} onClick={toggleColorMode} cursor="pointer" /> : <SunIcon fontSize={20} onClick={toggleColorMode} cursor="pointer" />}
+			<Link to={"/"}>
+			<Text className="pacifico-regular" fontSize="2xl">
+				Reconnect
+			</Text>
 			</Link>
-			}
-			<Text className="pacifico-regular" fontSize={{ base: "xl", md: "2xl" }}>Reconnect</Text>
 
-			<Flex gap={4} alignItems={"center"}>
-				{colorMode === 'light' ? <MoonIcon fontSize={20} onClick={toggleColorMode} /> : <SunIcon fontSize={20}  onClick={toggleColorMode} />}
-				{
-					user && (
-						<>
+			{/* Menu - Only visible on mobile screens */}
+			<Box display={{ base: "block", md: "none" }}>
+				<Menu>
+					<MenuButton
+						as={IconButton}
+						aria-label="Options"
+						icon={<HamburgerIcon />}
+						variant="outline"
+						size="sm"
+					/>
+					<MenuList>
+						<MenuItem icon={<RxAvatar size={22} />}>
 							<Link to={`/${user?.username}`}>
-								<RxAvatar fontSize={22} />
+								Your Profile
 							</Link>
+						</MenuItem>
+						<MenuItem icon={<BsSearch size={18} />}>
 							<Link to={"/search"}>
-								<BsSearch size={18} />
+								Search User
 							</Link>
-							<LogoutBtn />
-						</>
+						</MenuItem>
+						<MenuItem>
+							<LogoutBtn  text={"Logout"}/>
+						</MenuItem>
+					</MenuList>
+				</Menu>
+			</Box>
 
-					)
-				}
+			{/* User Links */}
+			<Flex gap={4} alignItems="center" display={{ base: "none", md: "flex" }}>
+				{user && (
+					<>
+						<Link to={`/${user?.username}`}>
+							<RxAvatar fontSize={22} />
+						</Link>
+						<Link to={"/search"}>
+							<BsSearch size={18} />
+						</Link>
+						<LogoutBtn />
+					</>
+				)}
 			</Flex>
-
 		</Flex>
 	);
 };

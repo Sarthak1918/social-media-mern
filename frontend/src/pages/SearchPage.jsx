@@ -9,6 +9,7 @@ const SearchPage = () => {
     const [loading, setLoading] = useState(false);
 
     const handleSearch = async (searchQuery) => {
+        if(searchQuery=="") return;
         setLoading(true);
         try {
             const response = await fetch(`/api/user/search?query=${searchQuery}`);

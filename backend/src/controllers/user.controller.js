@@ -210,3 +210,31 @@ export const searchUser = AsyncHandler(async(req,res)=>{
         new ApiResponse(200,users,"Users fetched successfully")
     )
 })
+
+export const getSuggestedUsers = AsyncHandler(async(req,res)=>{
+    const userId = req.user._id; //current user 
+
+    const alreadyFollowingUsers = await User.findById(userId).select("following")
+
+    const users = await User.aggregate([
+        {
+            $match:{
+                _id:{$ne:userId}  //excluded current user
+            }
+        },
+        {
+            $sample:{
+                size:10
+            }
+        },
+    ])
+
+    const filteredUsers = users.filter((user)=>{
+        return !alreadyFollowingUsers.following.includes(user._id) //excluded the users whom the current user is already following
+    })
+    const suggestedUsers = filteredUsers.slice(0,4);
+
+    res.status(200).json(
+        new ApiResponse(200,suggestedUsers,"Suggested Users fetched successfully")
+    )
+})
