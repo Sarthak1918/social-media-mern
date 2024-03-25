@@ -1,4 +1,4 @@
-import { Flex, Text, useColorMode, IconButton, Menu, MenuButton, MenuList, MenuItem, Box } from "@chakra-ui/react";
+import { Flex, Text, useColorMode, IconButton, Menu, MenuButton, MenuList, MenuItem, Box, LightMode } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import { MoonIcon, SunIcon, HamburgerIcon } from "@chakra-ui/icons";
@@ -23,7 +23,7 @@ const Header = () => {
 			position="sticky" // Add this line
             top="0" // Add this line
             zIndex="sticky" // Add this line
-			bg={"white"}
+			bg={colorMode==='light'?"white":"dark"}
 		>
 			{/* Logo */}
 			{colorMode === 'light' ? <MoonIcon fontSize={20} onClick={toggleColorMode} cursor="pointer" /> : <SunIcon fontSize={20} onClick={toggleColorMode} cursor="pointer" />}
