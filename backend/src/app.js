@@ -3,6 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import {v2 as cloudinary} from "cloudinary"
 import path from "path";
+import job from "./cron/cron.js";
 
 
 const app = express()
@@ -14,6 +15,9 @@ app.use(cors({
 const __dirname = path.resolve()
 //when we want to use any external middleware or we want to do some configuration, we use by "app.use"
 //middlewares
+
+job.start()
+
 
 cloudinary.config({
     cloud_name : process.env.CLOUDINARY_NAME,
@@ -32,6 +36,7 @@ app.use(cookieParser()) //to parse cookies
 //import routes
 import userRouter from "./routes/user.routes.js"
 import postRouter from "./routes/post.routes.js"
+import job from "./cron/cron.js";
 
 //routes declaration
 app.use("/api/user",userRouter)
