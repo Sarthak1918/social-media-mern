@@ -241,3 +241,26 @@ export const getSuggestedUsers = AsyncHandler(async(req,res)=>{
         new ApiResponse(200,suggestedUsers,"Suggested Users fetched successfully")
     )
 })
+
+export const getFollowing = AsyncHandler(async(req,res)=>{
+    const userId = req.user._id
+    if(!userId){
+        throw new ApiError(400,"User not found")
+    }
+    const users = await User.find({followers:userId}).select("name username profilePic followers")
+    res.status(200).json(
+        new ApiResponse(200,users,"Following fetched successfully")
+    )
+})
+
+export const getFollowers = AsyncHandler(async(req,res)=>{
+    const userId = req.user._id
+    if(!userId){
+        throw new ApiError(400,"User not found")
+    }
+    const followers = await User.find({following:userId}).select("name username profilePic followers")
+
+    res.status(200).json(
+        new ApiResponse(200,followers,"Followers fetched successfully")
+    )
+})

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { followUnFollowUser, getCurrentUser, getSuggestedUsers, getUserProfile, loginUser, logoutUser, searchUser, signupUser, updateUser } from "../controllers/user.controller.js";
+import { followUnFollowUser, getCurrentUser, getFollowers, getFollowing, getSuggestedUsers, getUserProfile, loginUser, logoutUser, searchUser, signupUser, updateUser } from "../controllers/user.controller.js";
 import { verifyUserJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router()
@@ -13,6 +13,8 @@ router.post("/update",verifyUserJWT,updateUser)
 router.get("/profile/:query",getUserProfile) //not a protected route
 router.get("/search",verifyUserJWT,searchUser)
 router.get("/suggestedUsers",verifyUserJWT,getSuggestedUsers)
+router.get("/followers",verifyUserJWT,getFollowers)
+router.get("/following",verifyUserJWT,getFollowing)
 
 export default router;
 

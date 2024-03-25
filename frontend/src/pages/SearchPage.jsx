@@ -2,6 +2,7 @@
 import { Avatar, Box, Flex, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import UserCard from '../components/UserCard';
 
 const SearchPage = () => {
     const [query, setQuery] = useState('');
@@ -47,7 +48,7 @@ const SearchPage = () => {
 
                 {!loading &&
                     searchResults?.map(user => (
-                        <UserSearchItem user={user} key={user._id} />
+                        <UserCard user={user} key={user._id} />
                     ))}
 
             </Box>
@@ -67,24 +68,4 @@ const SearchPage = () => {
 export default SearchPage;
 
 
-const UserSearchItem = ({ user }) => {
-    return (
-        <Link to={`/${user.username}`}>
-            <Flex gap={4} py={3} my={2} w={"full"}  borderRadius={"xl"}>
-                <Avatar name={user?.username} src={user?.profilePic} size={"xl"} />
-                <Flex gap={1} w={"full"} flexDirection={"column"}>
-                    <Link to={`/${user?.username}`}>
-                        <Text fontSize='md' fontWeight='bold' _hover={{ textDecoration: "underline" }}>{user?.name}</Text>
-                    </Link>
-                    <Flex alignItems={"center"}>
-                        <Text fontWeight={500}>{user?.username}</Text>
-                        <Image src='/verified.png' ml={1} w={4} h={4} />
-                    </Flex>
-                    <Text>{user?.followers.length} followers</Text>
-                    <Flex>
-                    </Flex>
-                </Flex>
-            </Flex>
-        </Link>
-    )
-}
+

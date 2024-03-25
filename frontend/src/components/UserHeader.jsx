@@ -96,11 +96,11 @@ const UserHeader = ({ user }) => {
 
             <Flex alignItems={"center"} justifyContent={"space-between"} w={"full"}>
                 <Flex gap={5}>
-                    <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
+                    <Flex as={Link} to={"/following"} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
                         <Text fontSize={"md"} fontWeight={500}>{user?.following.length}</Text>
                         <Text fontWeight={500} color={"gray"} fontSize={"sm"}>Following</Text>
                     </Flex>
-                    <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
+                    <Flex as={Link} to={"/followers"} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
                         <Text fontSize={"md"} fontWeight={500}>{user?.followers.length}</Text>
                         <Text fontWeight={500} color={"gray"} fontSize={"sm"}>Followers</Text>
                     </Flex>

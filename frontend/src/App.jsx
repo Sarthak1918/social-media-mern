@@ -9,6 +9,8 @@ import { useRecoilValue } from 'recoil'
 import userAtom from './atoms/userAtom'
 import UpdateProfilePage from './pages/UpdateProfilePage'
 import SearchPage from './pages/SearchPage'
+import Followers from './pages/Followers'
+import Following from './pages/Following'
 
 function App() {
   const user = useRecoilValue(userAtom)
@@ -25,6 +27,8 @@ function App() {
         <Route path='/:username' element={user ?<UserPage />: <Navigate to="/auth" />} />
         <Route path='/:username/post/:postId' element={user ? <PostPage /> : <Navigate to="/auth" />} />
         <Route path='/search' element={user ? <SearchPage /> : <Navigate to="/auth" />} />
+        <Route path='/followers' element={user ? <Followers /> : <Navigate to="/auth" />} />
+        <Route path='/following' element={user ? <Following /> : <Navigate to="/auth" />} />
       </Routes>
     </Container>
 

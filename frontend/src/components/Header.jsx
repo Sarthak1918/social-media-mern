@@ -47,7 +47,7 @@ const Header = () => {
 						<MenuItem as={Link} to={`/${user?.username}`} icon={<RxAvatar size={22} />}>
 								Your Profile
 						</MenuItem>
-						<MenuItem as={Link} to={"/"} icon={<BsSearch size={18} />}>
+						<MenuItem as={Link} to={"/search"} icon={<BsSearch size={18} />}>
 								Search User
 						</MenuItem>
 						<MenuItem>
