@@ -2,9 +2,11 @@ import { Avatar, Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import useFollowUnFollow from '../hooks/useFollowUnFollow'
+import { useRecoilValue } from 'recoil'
 
 function UserCard({ user }) {
     const { handleFollowUnFollow, updating, following } = useFollowUnFollow(user)
+    const currentUser = useRecoilValue(userAtom)
 
     return (
         <Flex as={Link}  w={"full"} justifyContent={"space-between"} alignItems={"center"}>
@@ -23,7 +25,7 @@ function UserCard({ user }) {
                     </Flex>
                 </Flex>
             </Flex>
-            <Button
+            {currentUser._id!==user._id &&<Button
                 size={"sm"}
                 color={following ? "black" : "white"}
                 bg={following ? "gray.200" : "blue.400"}
@@ -36,6 +38,7 @@ function UserCard({ user }) {
             >
                 {following ? "Unfollow" : "Follow"}
             </Button>
+            }
         </Flex>
     )
 }
