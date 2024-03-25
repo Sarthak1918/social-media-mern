@@ -44,15 +44,11 @@ const Header = () => {
 						size="sm"
 					/>
 					<MenuList>
-						<MenuItem icon={<RxAvatar size={22} />}>
-							<Link to={`/${user?.username}`}>
+						<MenuItem as={Link} to={`/${user?.username}`} icon={<RxAvatar size={22} />}>
 								Your Profile
-							</Link>
 						</MenuItem>
-						<MenuItem icon={<BsSearch size={18} />}>
-							<Link to={"/search"}>
+						<MenuItem as={Link} to={"/"} icon={<BsSearch size={18} />}>
 								Search User
-							</Link>
 						</MenuItem>
 						<MenuItem>
 							<LogoutBtn  text={"Logout"}/>
