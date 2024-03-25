@@ -233,7 +233,10 @@ export const getSuggestedUsers = AsyncHandler(async(req,res)=>{
         return !alreadyFollowingUsers.following.includes(user._id) //excluded the users whom the current user is already following
     })
     const suggestedUsers = filteredUsers.slice(0,4);
-
+    //null passwords of suggested users
+    suggestedUsers.forEach((user)=>{
+        user.password = undefined
+    })
     res.status(200).json(
         new ApiResponse(200,suggestedUsers,"Suggested Users fetched successfully")
     )

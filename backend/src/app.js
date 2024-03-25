@@ -2,6 +2,8 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import {v2 as cloudinary} from "cloudinary"
+import path from "path";
+
 
 const app = express()
 app.use(cors({
@@ -9,6 +11,7 @@ app.use(cors({
     credentials : true
 }))
 
+const __dirname = path.resolve()
 //when we want to use any external middleware or we want to do some configuration, we use by "app.use"
 //middlewares
 
@@ -25,6 +28,7 @@ app.use(express.static("public"))
 app.use(cookieParser()) //to parse cookies
 
 
+
 //import routes
 import userRouter from "./routes/user.routes.js"
 import postRouter from "./routes/post.routes.js"
@@ -32,6 +36,15 @@ import postRouter from "./routes/post.routes.js"
 //routes declaration
 app.use("/api/user",userRouter)
 app.use("/api/post",postRouter)
+
+
+if(process.env.NODE_ENV==="production"){
+    app.use(express.static(path.join(__dirname,"/frontend/dist")))
+
+    app.get("*",(req,res)=>{
+        res.sendFile(path.resolve(__dirname,"frontend","dist","index.html"))
+    })
+}
 
 
 
