@@ -27,8 +27,8 @@ function App() {
         <Route path='/:username' element={user ?<UserPage />: <Navigate to="/auth" />} />
         <Route path='/:username/post/:postId' element={user ? <PostPage /> : <Navigate to="/auth" />} />
         <Route path='/search' element={user ? <SearchPage /> : <Navigate to="/auth" />} />
-        <Route path='/followers' element={user ? <Followers /> : <Navigate to="/auth" />} />
-        <Route path='/following' element={user ? <Following /> : <Navigate to="/auth" />} />
+        <Route path='/:userId/followers' element={user ? <Followers /> : <Navigate to="/auth" />} />
+        <Route path='/:userId/following' element={user ? <Following /> : <Navigate to="/auth" />} />
       </Routes>
     </Container>
 

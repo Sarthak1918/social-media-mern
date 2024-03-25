@@ -57,7 +57,7 @@ function HomePage() {
   return (
     <Flex gap={{base:10,md:16}} flexDirection={{ base: "column-reverse", md: "row" }} alignItems={"flex-start"}>
       <Box flex={70}>
-        {!loading && posts.length === 0 && <h1 style={{ textAlign: "center", fontSize: "larger", fontWeight: "500" }}>No posts to show.Follow some users</h1>}
+        {!loading && posts.length === 0 && <h1 style={{ textAlign: "center", fontSize: "larger", fontWeight: "500" }}>No posts to show.</h1>}
 
         {loading && <Box w={"full"} alignItems={"center"} justifyContent={"center"} p={5}>
           <Spinner size={"xl"} />

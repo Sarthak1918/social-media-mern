@@ -1,15 +1,17 @@
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import UserCard from '../components/UserCard';
+import { useParams } from 'react-router-dom';
 
 function Following() {
   const[following,setFollowing] = useState([]);
   const[loading,setLoading] = useState(true);
+  const {userId} = useParams()
 
   useEffect(() => {
     const getFollowing = async() =>{
       try {
-        const res = await fetch("/api/user/following")
+        const res = await fetch(`/api/user/${userId}/following`)
         const data = await res.json()
         setFollowing(data.data)
         console.log(data);
@@ -20,7 +22,7 @@ function Following() {
       }
     }
     getFollowing()
-  },[])
+  },[userId])
 
   return (
     <Box>

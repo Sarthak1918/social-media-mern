@@ -13,8 +13,8 @@ router.post("/update",verifyUserJWT,updateUser)
 router.get("/profile/:query",getUserProfile) //not a protected route
 router.get("/search",verifyUserJWT,searchUser)
 router.get("/suggestedUsers",verifyUserJWT,getSuggestedUsers)
-router.get("/followers",verifyUserJWT,getFollowers)
-router.get("/following",verifyUserJWT,getFollowing)
+router.get("/:userId/followers",verifyUserJWT,getFollowers)
+router.get("/:userId/following",verifyUserJWT,getFollowing)
 
 export default router;
 

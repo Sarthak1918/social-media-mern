@@ -243,7 +243,7 @@ export const getSuggestedUsers = AsyncHandler(async(req,res)=>{
 })
 
 export const getFollowing = AsyncHandler(async(req,res)=>{
-    const userId = req.user._id
+    const {userId} = req.params
     if(!userId){
         throw new ApiError(400,"User not found")
     }
@@ -254,7 +254,7 @@ export const getFollowing = AsyncHandler(async(req,res)=>{
 })
 
 export const getFollowers = AsyncHandler(async(req,res)=>{
-    const userId = req.user._id
+    const {userId} = req.params
     if(!userId){
         throw new ApiError(400,"User not found")
     }
