@@ -73,7 +73,7 @@ import {
       <Flex justify={'center'}>
         <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
           <Stack align={'center'}>
-            <Heading fontSize={'4xl'} textAlign={'center'}>
+            <Heading fontSize={'xl'} textAlign={'center'}>
               Login
             </Heading>
           </Stack>
