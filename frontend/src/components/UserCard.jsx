@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import useFollowUnFollow from '../hooks/useFollowUnFollow'
 import { useRecoilValue } from 'recoil'
+import userAtom from '../atoms/userAtom'
 
 function UserCard({ user }) {
     const { handleFollowUnFollow, updating, following } = useFollowUnFollow(user)
