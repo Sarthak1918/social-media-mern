@@ -36,7 +36,6 @@ app.use(cookieParser()) //to parse cookies
 //import routes
 import userRouter from "./routes/user.routes.js"
 import postRouter from "./routes/post.routes.js"
-import job from "./cron/cron.js";
 
 //routes declaration
 app.use("/api/user",userRouter)
